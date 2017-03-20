@@ -1,1 +1,1 @@
-from .core import hmm
+from acquisition.getAllFiles import hmm
