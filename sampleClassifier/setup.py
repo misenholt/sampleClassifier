@@ -10,13 +10,13 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='acquisition',
-    version='0.1.0',
-    description='Sample package for Python-Guide.org',
+    name='sampleClassifier',
+    version='0.0.1',
+    description='Sample classifier for training',
     long_description=readme,
-    author='Kenneth Reitz',
-    author_email='me@kennethreitz.com',
-    url='https://github.com/kennethreitz/samplemod',
+    author='Max Isenholt',
+    author_email='misenholt@gmail.com',
+    url='https://github.com/misenholt/sampleClassifier',
     license=license,
     packages=find_packages(exclude=('tests', 'docs'))
 )

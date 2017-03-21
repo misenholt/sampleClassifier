@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from . import helpers
 import re
 from urllib.request import urlretrieve
 from acquisition import properties
 import boto3
+import os
 
 
 def getAllFiles():
@@ -16,7 +16,7 @@ def getFile(url):
     # get file from web
 #     with urlretrieve(url) as (local_filename, h):
     local_filename, h = urlretrieve(url)
-    if properties.save_location == 'file_system':
+    if properties.saveToBucket == False:
         saveFileFS(local_filename, fn)
     else:
         saveFileS3(local_filename, properties.bucketName, fn)
@@ -34,7 +34,7 @@ def getUrls():
 
     urls = []
 #     urlFile = open('downloadURLs', 'r')
-    with open('downloadURLs', 'r') as urlFile:
+    with open(os.path.sep.join((properties.data_loc, 'downloadURLs')), 'r') as urlFile:
         for url in urlFile:
             urls.append(url.strip())
         
