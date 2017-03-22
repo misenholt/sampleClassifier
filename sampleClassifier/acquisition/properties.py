@@ -7,4 +7,4 @@ import os
 
 saveToBucket = False
 bucketName = 'misenholt-patent-data'
-data_loc = os.path.sep.join((os.getcwd(), 'data', os.path.sep))
+data_loc = os.path.sep.join((os.getcwd(), 'acquisition', 'data', os.path.sep))

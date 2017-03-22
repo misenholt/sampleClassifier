@@ -18,6 +18,10 @@ setup(
     author_email='misenholt@gmail.com',
     url='https://github.com/misenholt/sampleClassifier',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs')),
+    package_dir={'acquisition':'acquisition'},
+    package_data={'acquisition':['data//*']},
+    data_files=[('',['LICENSE'])]
+    
 )
 
