@@ -5,14 +5,15 @@ from acquisition import properties
 import boto3
 import os
 from urllib.error import ContentTooShortError
-import tempfile
 
 
 def getAllFiles():
     urls = getUrls()
+    alreadyDownloaded = getDownloadedFilenames()
 #     print(properties.saveToBucket)
     for url in urls:
-        getFile(url)
+        if getFNFromURL(url) not in alreadyDownloaded:
+            getFile(url)
 
 def getFile(url):
     fn = getFNFromURL(url)
@@ -21,7 +22,7 @@ def getFile(url):
     try:
         local_filename, h = request.urlretrieve(url)
     except ContentTooShortError:
-        print("Failed to download from url {url}".format(url))
+        print("Failed to download from url {url}".format(url=url))
     if properties.saveToBucket:
         print('saving {fn} to bucket {bn}'.format(fn=fn, bn=properties.bucketName))
         saveFileS3(local_filename, properties.bucketName, fn)
@@ -72,6 +73,12 @@ def saveFileS3(local_filename, bucket, filename):
     client = boto3.client('s3', 'us-east-1')
     transfer = boto3.s3.transfer.S3Transfer(client)
     transfer.upload_file(local_filename, bucket, filename)
+    
+def getDownloadedFilenames():
+    filenames = []
+    for obj in boto3.resource('s3').Bucket(properties.bucketName).objects.all():
+        filenames.append(obj.key)
+    return filenames
     
 if __name__ == "__main__":
 #     tempfile.tempdir = '~/tmp/'

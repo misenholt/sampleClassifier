@@ -27,4 +27,18 @@ Sample Classifier
  6. Evaluate: Using top-performing models from step 5, classify the entire data set and evaluate the models.
 
  
- 
+ =========================
+ AWS Setup
+ =========================
+ 1. launch instance with amazon linux ami
+ 2. 	sudo yum install python35
+		virtualenv -p python35 venv
+		source ./venv/bin/activate
+ 3. copy source code
+ 4. 	cd sampleClassifier
+		pip install -r requirements.txt
+		export PYTHONPATH=${PYTHONPATH}:${HOME}/sampleClassifier
+ 5. 	mkdir .aws
+ 6. copy credentials file
+
+		
