@@ -3,6 +3,7 @@ import re
 import urllib.request  as request
 from acquisition import properties
 import boto3
+from boto3.s3.transfer import S3Transfer
 import os
 from urllib.error import ContentTooShortError
 
@@ -17,8 +18,6 @@ def getAllFiles():
 
 def getFile(url):
     fn = getFNFromURL(url)
-    # get file from web
-#     with urlretrieve(url) as (local_filename, h):
     try:
         local_filename, h = request.urlretrieve(url)
     except ContentTooShortError:
@@ -71,7 +70,7 @@ def saveFileS3(local_filename, bucket, filename):
 #         bucket.upload_fileobj(data, filename)
 # ==============
     client = boto3.client('s3', 'us-east-1')
-    transfer = boto3.s3.transfer.S3Transfer(client)
+    transfer = S3Transfer(client)
     transfer.upload_file(local_filename, bucket, filename)
     
 def getDownloadedFilenames():

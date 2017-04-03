@@ -14,7 +14,7 @@ Sample Classifier
  Planning
  ========================
  
- 1. Data Aquisition: The data I plan to use is the US Patent Data. This data set is very large and is semi-structured to unstructured. It comes in a variety of formats: xml, sgml, and a proprietary format depending on the year. In addition, fields and variables have changed over the years. I have previously downloaded this data. I need to find it, 	possibly update it, verify it and record metadata and provenance.
+ 1. Data Aquisition: The data I plan to use is the US Patent Data. This data set is very large and is semi-structured to unstructured. It comes in a variety of formats: xml, sgml, and a proprietary format depending on the year. In addition, fields and variables have changed over the years. 
  
  2. Data Cleaning: I need to establish uniformity of the data I wish to use. This means, for example if I wish to use a heading, there needs to be a heading for every record I wish to use, or at least a consistent proportion of records in every year. The plan is to insert records into a SQL database and then reconcile or remove fields to achieve the desired density. Given the size of the data I may need to use a nosql database.
  
@@ -35,10 +35,12 @@ Sample Classifier
 		virtualenv -p python35 venv
 		source ./venv/bin/activate
  3. copy source code
- 4. 	cd sampleClassifier
+ 4.		export PYTHONPATH=${PYTHONPATH}:${HOME}/sampleClassifier
+		mkdir .aws
+ 5. copy credentials file
+ 6. 	cd sampleClassifier
 		pip install -r requirements.txt
-		export PYTHONPATH=${PYTHONPATH}:${HOME}/sampleClassifier
- 5. 	mkdir .aws
- 6. copy credentials file
+		
+		java -jar PatentTransformer.jar --input="2003_pg030107.zip"
 
 		
