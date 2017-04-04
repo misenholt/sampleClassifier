@@ -76,9 +76,11 @@ def saveFileS3(local_filename, bucket, filename):
 def getDownloadedFilenames():
     filenames = []
     for obj in boto3.resource('s3').Bucket(properties.bucketName).objects.all():
-        filenames.append(obj.key)
+        if '/' not in obj.key:
+            filenames.append(obj.key)
     return filenames
     
 if __name__ == "__main__":
 #     tempfile.tempdir = '~/tmp/'
-    getAllFiles()
+#     getAllFiles()
+    getDownloadedFilenames()

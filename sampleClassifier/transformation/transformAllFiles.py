@@ -9,40 +9,65 @@ import subprocess
 import re
 import os
 import json
-from tempfile import TemporaryFile
 import multiprocessing
 import boto3
 import time
 from random import randint
 
-def transformAllFiles():
-    fileNameList = getDownloadedFilenames()[::-1]
+def getTestFileNames():
+    return ['test/testFile1.zip', 'test/testFile2.zip', 'test/testFile3.zip', 'test/testFile4.zip']
+
+def transformAllFiles(test):
+    if test:
+        fileNameList = getTestFileNames()
+    else:
+        fileNameList = getDownloadedFilenames()[::-1]
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(properties.bucketName)
     fileCount = 0
     for fileName in fileNameList:
-        filePath = os.path.sep.join((properties.tempFilePath, fileName))
-        bucket.download_file(fileName, filePath)
-        if transformFile(filePath):
+        inFilePath = os.path.sep.join((properties.tempFilePath, fileName.split('/')[-1]))
+        print(inFilePath)
+
+        bucket.download_file(fileName, inFilePath)
+        if transformFile(inFilePath, test):
             cleanupFile(bucket, fileName)
             fileCount += 1
         else:
             print('Failed to transform file {fn}'.format(fn=fileName))
         
-        if fileCount > 0: break
+#         if fileCount > 0: break
         
         
-def transformFile(filePath):
-    ret = subprocess.run(['java','-Xmx4g', '-jar', properties.transformerJarPath, '--input={fn}'.format(fn=filePath)])
-    return ret.returncode == 0
+def transformFile(filePath, test):
+    if test:
+        return testTransform(filePath)
+    else:
+        ret = subprocess.run(['java','-Xmx4g', '-jar', properties.transformerJarPath, '--input={fn}'.format(fn=filePath)])
+        return ret.returncode == 0
     
+def testTransform(filePath):
+    try:
+        outFilePath = os.path.sep.join(('output', re.sub('.zip$', '.bulk', filePath.split('/')[-1])))
+        print(outFilePath)
+        with open(filePath, 'r') as inFile, open(outFilePath, 'w') as outFile:
+            for line in inFile:
+                outFile.write(line)
+                
+            outFile.write('\n{"processed":1}')
+        
+        return True
+    except Exception:
+        print('Failed test transform')
+        return False
 
 def cleanupFile(bucket, fileName):
-    inFilePath = os.path.sep.join(('output', re.sub('.zip$', '.bulk', fileName)))
-    outFileName = re.sub('.zip$', '.json', fileName)
+    inFilePath = os.path.sep.join(('output', re.sub('.zip$', '.bulk', fileName.split('/')[-1])))
+    outFileName = re.sub('.zip$', '.json', fileName).split('/')[-1]
     data = []
     with open(inFilePath, 'r') as inFile:
         for line in inFile:
+            print(line)
             data.append(json.loads(line))
          
     with open(outFileName, 'w') as outFile: 
@@ -111,7 +136,7 @@ class multiprocessManager():
         
 
 if __name__ == '__main__':
-    transformAllFiles()
+    transformAllFiles(test=True)
 #     fn = '2003_pg030107.zip'
 #     s3 = boto3.resource('s3')
 #     bucket = s3.Bucket(properties.bucketName)

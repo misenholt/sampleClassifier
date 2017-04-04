@@ -41,6 +41,13 @@ Sample Classifier
  6. 	cd sampleClassifier
 		pip install -r requirements.txt
 		
+==========================
+each session
+ 1. export PYTHONPATH=${PYTHONPATH}:${HOME}/sampleClassifier
+ 2. source ./venv/bin/activate
+ 
+ 
+ 
 		java -jar PatentTransformer.jar --input="2003_pg030107.zip"
 
 		
